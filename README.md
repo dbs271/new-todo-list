@@ -1,70 +1,96 @@
-# Getting Started with Create React App
+## PropTypes 종류
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- array: 배열
+- arrayOf(다른 PropType): 특정 PropType으로 이루어진 배열을 의미. 예를 들어 arrayOf(PropTypes.number)는 숫자로 이루어진 배열
+- bool: true 혹은 false
+- func: 함수
+- number: 숫자
+- object: 객체
+- string: 문자열
+- symbol: ES6의 Symbol
+- node: 렌더링 할 수 있는 모든 것(숫자, 문자열, 혹은 JSX 코드. children도 node PropType이다.)
+- instanceOf(클래스): 특정 클래스의 인스턴스 (예: instanceOf(MyClass))
+- oneOf(['dog', 'cat']): 주어진 배열 요소 중 값 하나
+- oneOfType([React.PropTypes.string, PropTypes.number]): 주어진 배열 안의 종류 중 하나
+- objectOf(React.PropTypes.number): 객체의 모든 키 값이 인자로 주어진 PropType인 객체
+- shape({name: PropTypes.string, num: PropTypes.number}): 주어진 스키마를 가진 객체
+- any: 아무 종류
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+# 함수형 컴포넌트에서 useState 사용
 
-### `npm start`
+## 배열 비구조화 할당
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+배열 비구조화 할당은 배열 안에 들어 있는 값을 쉽게 추출할 수 있도록 해주는 문법
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```js
+const array = [1, 2];
+const one = array[0];
+const two = array[1];
+```
 
-### `npm test`
+위 코드를 배열 비구조화 할당을 사용하면 아래와 같이 표현할 수 있다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```js
+const array = [1, 2];
+const [one, two] = array;
+```
 
-### `npm run build`
+## useState 사용하기
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```js
+import { useState } from "react";
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+const Say = () => {
+  const [message, setMessage] = useState("");
+  const onClickEnter = () => setMessage("Hi");
+  const onClickLeave = () => setMessage("Bye");
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  return (
+    <div>
+      <button onClick={onClickEnter}>입장</button>
+      <button onClick={onClickLeave}>퇴장</button>
+      <h1>{message}</h1>
+    </div>
+  );
+};
 
-### `npm run eject`
+export default Say;
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+useState 함수의 인자에는 상태의 초기값을 넣어준다. 값의 형태는 자유. 숫자, 문자열, 객체, 배열 등
+함수를 호출하면 배열이 반환되는데 배열의 첫 번째 원소는 현재 상태이고, 두 번째 원소는 상태를 바꿔주는 함수다. 이 함수를 세터(Setter) 함수라고 부름. 그리고 배열 비구조화 할당을 통해 이름을 자유롭게 정해 줄 수 있다. 현재 message와 setMessage라고 이름을 설정했는데, text와 setText라고 이름을 자유롭게 해도 상관없음
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 한 컴포넌트에서 useState 여러 번 사용하기
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```js
+import { useState } from "react";
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+const Say = () => {
+  const [message, setMessage] = useState("");
+  const onClickEnter = () => setMessage("Hi");
+  const onClickLeave = () => setMessage("Bye");
 
-## Learn More
+  const [color, setColor] = useState("black");
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  return (
+    <div>
+      <button onClick={onClickEnter}>입장</button>
+      <button onClick={onClickLeave}>퇴장</button>
+      <h1 style={{ color }}>{message}</h1>
+      <button style={{ color: "red" }} onClick={() => setColor("red")}>
+        red
+      </button>
+      <button style={{ color: "green" }} onClick={() => setColor("green")}>
+        green
+      </button>
+      <button style={{ color: "blue" }} onClick={() => setColor("blue")}>
+        blue
+      </button>
+    </div>
+  );
+};
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default Say;
+```
