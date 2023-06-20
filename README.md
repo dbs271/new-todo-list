@@ -94,3 +94,37 @@ const Say = () => {
 
 export default Say;
 ```
+
+## state를 사용할 때 주의 사항
+
+state 값을 바꿔야 할 때는 setState 혹은 useState를 통해 전달받은 세터 함수를 사용해야 한다.
+
+잘못된 예)
+
+```js
+const [obj, setObj] = useState({ a: 1, b: 1 });
+obj.b = 2;
+```
+
+배열이나 객체를 업데이트해야 할 때는?
+배열이나 객체의 사본을 만들고 그 사본에 값을 업데이트한 후, 그 사본의 상태를 setState 혹은 세터 함수를 통해 업데이트한다.
+
+```js
+// 객체
+const obj = { a: 1, b: 2, c: 3 };
+const nextObj = { ...obj, b: 2 }; // 사본을 만들어서 b 값만 덮어쓰기
+
+// 배열
+const array = [
+  { id: 1, value: true },
+  { id: 2, value: true },
+  { id: 3, value: false },
+];
+
+let nextArr = array.concat({ id: 4 }); // 새 항목 추가
+nextArr.filter((item) => item.id !== 2); // id가 2인 항목 제거
+nextArr.map((item) => (item.id === 1 ? { ...item, value: false } : item));
+// id가 1인 항목의 value를 false로 설정
+```
+
+객체에 대한 사본을 만들 때는 spread 연산자(...) 을 사용해 처리하고, 배열에 대한 사본을 만들 때는 배열의 내장 함수들을 활용한다.
