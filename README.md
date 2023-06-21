@@ -128,3 +128,93 @@ nextArr.map((item) => (item.id === 1 ? { ...item, value: false } : item));
 ```
 
 객체에 대한 사본을 만들 때는 spread 연산자(...) 을 사용해 처리하고, 배열에 대한 사본을 만들 때는 배열의 내장 함수들을 활용한다.
+
+---
+
+## 이벤트 핸들링
+
+### 이벤트를 사용할 때 주의 사항
+
+1. 이벤트 이름은 카멜 표기법으로 작성
+
+   예를 들어 HTML의 onclick은 리액트에서는 onClick으로 작성해야 됨.
+
+2. 이벤트에 실행할 자바스크립트 코드를 전달하는 것이 아니라, 함수 형태의 값을 전달한다.
+
+   HTML에서 이벤트를 설정할 때는 큰 따옴표 안에 실행할 코드를 넣었지만, 리액트에서는 함수 형태의 객체를 전달한다.
+
+3. DOM 요소에만 이벤트를 설저할 수 있다.
+
+   div, button, input, form, span 등의 DOM 요소에는 이벤트를 설정할 수 있지만, 직접 만든 컴포넌트에는 이벤트를 자체적으로 설정할 수 없다.
+
+### 이벤트 종류
+
+- Clipboard
+- Composition
+- Keyboard
+- Focus
+- Form
+- Mouse
+- Selection
+- Touch
+- UI
+- Wheel
+- Media
+- Image
+- Animation
+- Transition
+
+```jsx
+const { useState } = require("react");
+
+const EventPractice = () => {
+  const [form, setForm] = useState({
+    username: "",
+    message: "",
+  });
+  const { username, message } = form;
+  const onChange = (e) => {
+    const nextForm = {
+      ...form,
+      [e.target.name]: e.target.value,
+    };
+    setForm(nextForm);
+  };
+
+  const onClick = () => {
+    alert(username + ": " + message);
+    setForm({
+      username: "",
+      message: "",
+    });
+  };
+  const onKeyPress = (e) => {
+    if (e.key === "Enter") {
+      onClick();
+    }
+  };
+  return (
+    <div>
+      <h1>이벤트 연습</h1>
+      <input
+        type="text"
+        name="username"
+        placeholder="사용자명"
+        value={username}
+        onChange={onChange}
+      />
+      <input
+        type="text"
+        name="message"
+        placeholder="아무키나 누르세요"
+        value={message}
+        onChange={onChange}
+        onKeyPress={onKeyPress}
+      />
+      <button onClick={onClick}>확인</button>
+    </div>
+  );
+};
+
+export default EventPractice;
+```
