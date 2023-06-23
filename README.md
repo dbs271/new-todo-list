@@ -235,3 +235,116 @@ ref는 **DOM을 꼭 직접적으로 건드려야 할 때** 에만 사용한다.
 - 특정 input에 포커스 주기
 - 스크롤 박스 조작하기
 - Canvas 요소에 그림 그리기 등
+
+---
+
+## 컴포넌트 반복
+
+### 자바스크립트 배열의 map() 함수
+
+자바스크립트 배열 객체의 내장 함수인 map 함수를 사용해 반복되는 컴포넌트를 렌더링할 수 있다.
+map 함수는 파라미터로 전달된 함수를 사용해서 배열 내 각 요소를 원하는 규칙에 따라 변환한 후 그 결과를 새로운 배열을 생성한다.
+
+### 문법
+
+```js
+arr.map(callback, [thisArg]);
+```
+
+- callback: 새로운 배열의 요소를 생성하는 함수로 파라미터는 세가지다.
+  - currentValue: 현재 처리하고 있는 요소
+  - index: 현재 처리하고 있는 요소의 index 값
+  - array: 현재 처리하고 있는 원본 배열
+- thisArg(선택항목): callback 함수 내부에서 사용할 this 레퍼런스
+
+```js
+const IterationSample = () => {
+  const names = ["눈사람", "얼음", "눈", "바람"];
+
+  return (
+    <ul>
+      {names.map((name) => (
+        <li>{name}</li>
+      ))}
+    </ul>
+  );
+};
+
+export default IterationSample;
+```
+
+위 코드를 실행하고 웹 브라우저의 f12를 눌러 콘솔을 확인해보면
+
+"key" prop이 없다는 경고 메세지가 나타난다. key란 무엇일까?
+
+### key
+
+리액트에서 key는 컴포넌트 배열을 렌더링했을 때 어떤 원소에 변동이 있었는지 알아내려고 사용한다.
+
+예를 들어 유동적인 데이터를 다룰 때는 원소를 새로 생성할 수도, 제거할 수도, 수정할 수도 있다.
+
+key가 없을 때는 Virtual DOM을 비교하는 과정에서 리스트를 순차적으로 비교하면서 변화를 감지한다.
+하지만 key가 있다면 이 값을 사용하여 변화가 일어났는지 더욱 빠르게 알아낼 수 있다.
+
+### key 설정
+
+key 값을 설정할 때는 map 함수의 인자로 전달되는 함수 내부에서 컴포넌트 props를 설정하듯 설정하면 된다. key 값은 언제나 유일해야 한다. 따라서 데이터가 가진 고유값을 key 값으로 설정해야 한다.
+
+예시)
+
+```js
+const articleList = articles.map((article) => (
+  <Articel title={article.title} writer={article.writer} key={article.di} />
+));
+```
+
+### 데이터 추가 기능 구현하기
+
+```js
+const IterationSample = () => {
+  const [names, setNames] = useState([
+    { id: 1, text: "눈사람" },
+    { id: 2, text: "얼음" },
+    { id: 3, text: "눈" },
+    { id: 4, text: "바람" },
+  ]);
+
+  const [inputText, setInputText] = useState("");
+  const [nextId, setNextId] = useState(5);
+
+  const onChange = (e) => setInputText(e.target.value);
+
+  const onClick = () => {
+    const nextNames = names.concat({
+      id: nextId,
+      text: inputText,
+    });
+    setNextId(nextId + 1);
+    setNames(nextNames);
+    setInputText("");
+  };
+
+  return (
+    <ul>
+      <input value={inputText} onChange={onChange} />
+      <button onClick={onClick}>추가</button>
+      {names.map((name, index) => (
+        <div>
+          <li key={index}>{name.text}</li>
+        </div>
+      ))}
+    </ul>
+  );
+};
+
+export default IterationSample;
+```
+
+배열에 새 항목을 추가할 때 배열의 push 함수를 사용하지 않고 concat을 사용했는데 push 함수는 기존 배열 자체를 변경해주는 반면
+concat은 새로운 배열을 만들어 준다는 차이점이 있다.
+
+리액트에서 상태를 업데이트할 때는 기존 상태를 그대로 두면서 새로운 값을 상태로 설정해야 한다. 이를 불변성 유지라함
+
+불변성 유지를 해줘야 나중에 리액트 컴포넌트의 성능을 최적화할 수 있다.
+onClick 함수에서 새로운 항목을 추가할 때 객체의 id 값은 nextId를 사용하도록 하고, 클릭될 때마다 값이 1씩 올라가도록 구현했다.
+추가로 button이 클릭될 때 기존의 input 내용을 비우는 것도 구현하였다.

@@ -1,8 +1,8 @@
+import IterationSample from "./IterationSample";
 import "./App.css";
-import ValidationSample from "./ValidationSample";
 
 function App() {
-  return <ValidationSample />;
+  return <IterationSample />;
 }
 
 export default App;
